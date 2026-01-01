@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بطاقاتي التعليمية - تطبيق تعليمي تفاعلي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="تطبيق بطاقات تعليمية تفاعلي لمساعدتك على حفظ المعلومات بفعالية. استورد بطاقاتك التعليمية الخاصة.">
+    <meta name="keywords" content="بطاقات تعليمية, فلاش كارد, تعليم, دراسة, مراجعة, أسئلة وأجوبة">
+    <meta name="author" content="فريق بطاقاتي التعليمية">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container">
+            <h1><i class="fas fa-graduation-cap"></i>MyFlashCards بطاقاتي التعليمية</h1>
+            <p class="subtitle">تطبيق تفاعلي لمراجعة المعلومات والمذاكرة بفعالية</p>
+        </div>
+    </header>
+
+    <main class="app container">
+        <!-- شريط التقدم -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span id="progress-text">0%</span>
+                <span id="counter">0 / 0</span>
+            </div>
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <!-- البطاقة -->
+        <section class="card-wrapper">
+            <div class="card" id="flashcard" onclick="toggleCard()">
+                <!-- الوجه الأمامي -->
+                <div class="card-face front">
+                    <div class="card-meta">
+                        <span class="lesson-tag" id="lesson-tag">عام</span>
+                        <span class="difficulty-tag" id="difficulty-tag">سهل</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="q-number" id="q-number">سؤال 0</div>
+                        <div class="question" id="question">استورد ملف CSV للبدء باستخدام الزر أدناه</div>
+                        <div class="hint"><i class="fas fa-hand-point-up"></i> انقر على البطاقة لقلبها</div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <span class="card-date" id="card-date">تم التحميل: الآن</span>
+                    </div>
+                </div>
+
+                <!-- الخلف -->
+                <div class="card-face back">
+                    <div class="card-meta">
+                        <span class="lesson-tag" id="lesson-tag-back">عام</span>
+                        <span><i class="fas fa-history"></i> الجواب</span>
+                    </div>
+
+                    <div class="card-body answer" id="answer">
+                        الجواب
+                    </div>
+                    
+                    <div class="card-footer">
+                        <span class="card-tips"><i class="fas fa-lightbulb"></i> حاول تذكر السؤال قبل قلب البطاقة</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- أزرار التحكم -->
+        <div class="controls">
+            <button class="control-btn prev-btn" onclick="prevCard()" aria-label="البطاقة السابقة">
+                <i class="fas fa-arrow-right"></i> السابق
+            </button>
+            <button class="control-btn flip-btn" onclick="toggleCard()" aria-label="قلب البطاقة">
+                <i class="fas fa-sync-alt"></i> قلب
+            </button>
+            <button class="control-btn next-btn" onclick="nextCard()" aria-label="البطاقة التالية">
+                التالي <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <!-- معلومات البطاقات -->
+        <div class="cards-info">
+            <div class="info-item">
+                <i class="fas fa-layer-group"></i>
+                <div class="info-content">
+                    <span class="info-value" id="total-cards">0</span>
+                    <span class="info-label">إجمالي البطاقات</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-book"></i>
+                <div class="info-content">
+                    <span class="info-value" id="total-lessons">0</span>
+                    <span class="info-label">عدد الدروس</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- استيراد وتصدير ومسح -->
+        <div class="actions">
+            <div class="actions-row">
+                <button class="action-btn primary" onclick="document.getElementById('csv').click()">
+                    <i class="fas fa-file-import"></i> استيراد CSV
+                </button>
+                <input type="file" id="csv" accept=".csv" hidden>
+                <button class="action-btn secondary" onclick="exportCSV()" id="export-btn" disabled>
+                    <i class="fas fa-file-export"></i> تصدير CSV
+                </button>
+            </div>
+            
+            <div class="actions-row">
+                <button class="action-btn danger" onclick="clearAllCards()" id="clear-btn" disabled>
+                    <i class="fas fa-trash-alt"></i> مسح الكل
+                </button>
+            </div>
+        </div>
+        
+        <!-- تعليمات سريعة -->
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> كيفية الاستخدام</h3>
+            <ol class="instructions-list">
+                <li>انقر على زر "استيراد CSV" لتحميل بطاقاتك</li>
+                <li>انقر على البطاقة لقلبها ومعرفة الجواب</li>
+                <li>استخدم أزرار السابق والتالي للتنقل</li>
+                <li>انقر على "تصدير CSV" لحفظ بطاقاتك</li>
+                <li>انقر على "مسح الكل" لإزالة جميع البطاقات</li>
+            </ol>
+        </div>
+    </main>
+
+    <!-- التذييل المبسط -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="app-info">
+                    <h3><i class="fas fa-graduation-cap"></i> بطاقاتي التعليمية</h3>
+                    <p>تطبيق تعليمي مجاني لمساعدة الطلاب على المذاكرة بفعالية</p>
+                </div>
+                <div class="copyright">
+                    <p>© 2024 بطاقاتي التعليمية - جميع الحقوق محفوظة</p>
+                    <p class="version">تم التطوير من طرف بقة عبدالوهاب</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- إشعار عدم الاتصال -->
+    <div id="offline-notification" class="offline-alert">
+        <i class="fas fa-wifi-slash"></i>
+        <span>أنت تعمل بدون اتصال بالإنترنت</span>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+    // تسجيل Service Worker للعمل بدون إنترنت
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(() => {
+                console.log('Service Worker registered successfully');
+            }).catch(err => {
+                console.log('Service Worker registration failed: ', err);
+            });
+        });
+    }
+    
+    // التحقق من حالة الاتصال
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    
+    function updateOnlineStatus() {
+        const offlineNotification = document.getElementById('offline-notification');
+        if (!navigator.onLine) {
+            offlineNotification.style.display = 'flex';
+        } else {
+            offlineNotification.style.display = 'none';
+        }
+    }
+    
+    // التحقق من حالة الاتصال عند التحميل
+    updateOnlineStatus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# ملف robots.txt لتطبيق بطاقاتي التعليمية
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# تعليمات لمحركات البحث
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
