@@ -5,7 +5,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://cards4edu.vercel.app/sitemap.xml
 
 # تعليمات لمحركات البحث
 User-agent: Googlebot
